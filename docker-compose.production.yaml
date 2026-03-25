@@ -1,5 +1,4 @@
-version: '3'
-
+# Compose v2+: top-level "version" is obsolete (EasyPanel/Docker warns). Omit it.
 services:
   base: &base
     image: chatwoot/chatwoot:latest
