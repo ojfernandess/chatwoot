@@ -19,7 +19,8 @@ ENV RAILS_SERVE_STATIC_FILES ${RAILS_SERVE_STATIC_FILES}
 ARG RAILS_ENV=production
 ENV RAILS_ENV ${RAILS_ENV}
 
-ARG NODE_OPTIONS="--max-old-space-size=4096 --openssl-legacy-provider"
+# EasyPanel / small CI runners often OOM below 4GB during Vite; override with --build-arg if needed.
+ARG NODE_OPTIONS="--max-old-space-size=8192 --openssl-legacy-provider"
 ENV NODE_OPTIONS ${NODE_OPTIONS}
 
 ENV BUNDLE_PATH="/gems"
@@ -82,7 +83,8 @@ RUN mkdir -p /app/log
 
 # generate production assets if production environment
 RUN if [ "$RAILS_ENV" = "production" ]; then \
-  SECRET_KEY_BASE=precompile_placeholder RAILS_LOG_TO_STDOUT=enabled bundle exec rake assets:precompile \
+  export NODE_OPTIONS="${NODE_OPTIONS}" \
+  && SECRET_KEY_BASE=precompile_placeholder RAILS_LOG_TO_STDOUT=enabled bundle exec rake assets:precompile \
   && rm -rf spec node_modules tmp/cache; \
   fi
 

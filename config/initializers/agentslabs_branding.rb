@@ -4,6 +4,10 @@
 # on existing databases (new installs also pick this up via config/installation_config.yml).
 # To use different assets, set logos in Super Admin → Settings → App Config or remove this initializer.
 Rails.application.config.after_initialize do
+  # docker/Dockerfile runs assets:precompile with SECRET_KEY_BASE=precompile_placeholder and no Postgres —
+  # skip DB access so Vite/Rake build does not hang or error on connection.
+  next if ENV['SECRET_KEY_BASE'].to_s == 'precompile_placeholder'
+
   unless defined?(InstallationConfig) && ActiveRecord::Base.connection.data_source_exists?('installation_configs')
     next
   end

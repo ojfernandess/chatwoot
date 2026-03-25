@@ -9,6 +9,7 @@ services:
         RAILS_ENV: production
         BUNDLE_WITHOUT: development:test
         RAILS_SERVE_STATIC_FILES: "true"
+        NODE_OPTIONS: "--max-old-space-size=8192 --openssl-legacy-provider"
     image: agentslabs-chatwoot:latest
     restart: always
     env_file: .env
@@ -40,6 +41,7 @@ services:
         RAILS_ENV: production
         BUNDLE_WITHOUT: development:test
         RAILS_SERVE_STATIC_FILES: "true"
+        NODE_OPTIONS: "--max-old-space-size=8192 --openssl-legacy-provider"
     image: agentslabs-chatwoot:latest
     restart: always
     depends_on:
