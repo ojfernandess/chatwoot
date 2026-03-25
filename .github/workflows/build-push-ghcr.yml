@@ -1,0 +1,75 @@
+# Build Chatwoot image in GitHub Actions (com cache) e publica no GHCR.
+# No EasyPanel: use só `image` + `docker compose pull` em vez de `build` — deploy cai para minutos.
+#
+# Depois do primeiro push bem-sucedido:
+# 1. Em github.com → Packages → imagem → Package settings → visibilidade (público) OU
+# 2. No servidor: docker login ghcr.io com PAT (read:packages).
+#
+# EasyPanel: compose que aponta para, por exemplo:
+#   image: ghcr.io/seu-usuario/chatwoot:customizations
+# e remova o bloco `build:` dos serviços chatwoot e sidekiq (mesma imagem).
+
+name: Build and push image (GHCR)
+
+on:
+  push:
+    branches:
+      - customizations
+  workflow_dispatch:
+
+concurrency:
+  group: ghcr-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Image name (lowercase for GHCR)
+        id: image
+        run: echo "name=${REGISTRY}/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix=sha-
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            RAILS_ENV=production
+            BUNDLE_WITHOUT=development:test
+            RAILS_SERVE_STATIC_FILES=true
+            NODE_OPTIONS=--max-old-space-size=8192 --openssl-legacy-provider
+          cache-from: type=gha,scope=chatwoot-prod
+          cache-to: type=gha,mode=max,scope=chatwoot-prod

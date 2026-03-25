@@ -1,4 +1,5 @@
 # EasyPanel / self-hosted: build from docker/Dockerfile. Postgres image exige POSTGRES_PASSWORD não vazio.
+# Nomes dos serviços alinhados ao painel EasyPanel: chatwoot, chatwoot-sidekiq, chatwoot1-db (+ chatwoot-redis).
 # Se o .env tiver POSTGRES_PASSWORD vazio, as variáveis abaixo nos serviços app sobrepõem para bater certo com o Postgres.
 services:
   chatwoot:
@@ -16,9 +17,9 @@ services:
     volumes:
       - storage_data:/app/storage
     depends_on:
-      postgres:
+      chatwoot1-db:
         condition: service_healthy
-      redis:
+      chatwoot-redis:
         condition: service_started
     # Published host port: Compose reads this from project .env or the shell — not from EasyPanel UI alone.
     # Default 3010 avoids clashing with another stack on 3000; set CHATWOOT_PUBLISH_PORT=3000 if you need it.
@@ -28,15 +29,16 @@ services:
       - NODE_ENV=production
       - RAILS_ENV=production
       - INSTALLATION_ENV=docker
-      - POSTGRES_HOST=postgres
+      - POSTGRES_HOST=chatwoot1-db
       - POSTGRES_PORT=5432
       - POSTGRES_DATABASE=chatwoot
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - REDIS_URL=redis://chatwoot-redis:6379
     entrypoint: docker/entrypoints/rails.sh
     command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
 
-  sidekiq:
+  chatwoot-sidekiq:
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -48,9 +50,9 @@ services:
     image: agentslabs-chatwoot:latest
     restart: always
     depends_on:
-      postgres:
+      chatwoot1-db:
         condition: service_healthy
-      redis:
+      chatwoot-redis:
         condition: service_started
     env_file: .env
     volumes:
@@ -59,14 +61,15 @@ services:
       - NODE_ENV=production
       - RAILS_ENV=production
       - INSTALLATION_ENV=docker
-      - POSTGRES_HOST=postgres
+      - POSTGRES_HOST=chatwoot1-db
       - POSTGRES_PORT=5432
       - POSTGRES_DATABASE=chatwoot
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - REDIS_URL=redis://chatwoot-redis:6379
     command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
 
-  postgres:
+  chatwoot1-db:
     image: pgvector/pgvector:pg16
     restart: always
     volumes:
@@ -82,7 +85,7 @@ services:
       retries: 12
       start_period: 10s
 
-  redis:
+  chatwoot-redis:
     image: redis:alpine
     restart: always
     command: redis-server
