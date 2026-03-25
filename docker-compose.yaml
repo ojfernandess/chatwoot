@@ -20,9 +20,10 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    # Host port: set CHATWOOT_PUBLISH_PORT in .env if 3000 is already in use on the server.
+    # Published host port: Compose reads this from project .env or the shell — not from EasyPanel UI alone.
+    # Default 3010 avoids clashing with another stack on 3000; set CHATWOOT_PUBLISH_PORT=3000 if you need it.
     ports:
-      - "${CHATWOOT_PUBLISH_PORT:-3000}:3000"
+      - "${CHATWOOT_PUBLISH_PORT:-3010}:3000"
     environment:
       - NODE_ENV=production
       - RAILS_ENV=production
