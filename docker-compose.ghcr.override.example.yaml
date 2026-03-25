@@ -1,20 +1,13 @@
-# Exemplo de override para EasyPanel: imagem já construída no GitHub Actions (GHCR).
-#
-# 1. No GitHub: Actions → "Build and push image (GHCR)" deve estar verde na branch customizations.
-# 2. Packages: anote a URL da imagem, ex.: ghcr.io/ojfernandess/chatwoot:customizations
-# 3. No .env do projeto (Compose lê para interpolação): CHATWOOT_IMAGE=ghcr.io/usuario/repo:customizations
-# 4. No EasyPanel, mescle: -f docker-compose.yaml -f docker-compose.ghcr.override.yaml
-#    (copie este arquivo para docker-compose.ghcr.override.yaml e ajuste se não usar .env)
-#
-# build: null remove o build do compose base para o deploy só dar pull (rápido).
+# Cópia de referência — o arquivo usado no deploy é docker-compose.ghcr.override.yaml no repositório.
+# Personalize CHATWOOT_IMAGE no .env se o default ghcr.io/ojfernandess/chatwoot:customizations não servir.
 
 services:
   chatwoot:
-    image: ${CHATWOOT_IMAGE}
+    image: ${CHATWOOT_IMAGE:-ghcr.io/ojfernandess/chatwoot:customizations}
     pull_policy: always
     build: null
 
   chatwoot-sidekiq:
-    image: ${CHATWOOT_IMAGE}
+    image: ${CHATWOOT_IMAGE:-ghcr.io/ojfernandess/chatwoot:customizations}
     pull_policy: always
     build: null

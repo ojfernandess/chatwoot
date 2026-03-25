@@ -7,7 +7,7 @@
 #
 # EasyPanel: compose que aponta para, por exemplo:
 #   image: ghcr.io/seu-usuario/chatwoot:customizations
-# e remova o bloco `build:` dos serviços chatwoot e sidekiq (mesma imagem).
+# e remova o bloco `build:` dos serviços chatwoot e chatwoot-sidekiq (mesma imagem), ex.: docker-compose.ghcr.override.yaml.
 
 name: Build and push image (GHCR)
 

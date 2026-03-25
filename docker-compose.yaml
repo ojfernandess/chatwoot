@@ -2,6 +2,7 @@
 # Nomes dos serviços alinhados ao painel EasyPanel: chatwoot, chatwoot-sidekiq, chatwoot1-db (+ chatwoot-redis).
 # Sem `ports` no host: evita conflito com outros stacks; o proxy do painel fala com chatwoot:3000 na rede interna.
 # Para bind manual (sem proxy), mescle docker-compose.host-ports.override.example.yaml.
+# Imagem pré-buildada (GHCR): mescle docker-compose.ghcr.override.yaml — ver comentários nesse arquivo.
 # Se o .env tiver POSTGRES_PASSWORD vazio, as variáveis abaixo nos serviços app sobrepõem para bater certo com o Postgres.
 services:
   chatwoot:

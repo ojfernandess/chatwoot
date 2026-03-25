@@ -1,0 +1,19 @@
+# Mescle com o compose base no EasyPanel (deploy rápido, sem build no servidor):
+#   docker-compose.yaml  +  docker-compose.ghcr.override.yaml
+#
+# 1) GitHub → Actions → rode "Build and push image (GHCR)" na branch customizations.
+# 2) GitHub → Packages → ghcr.io/.../chatwoot → torne o pacote público OU no servidor:
+#    echo SEU_PAT | docker login ghcr.io -u SEU_USUARIO --password-stdin
+# 3) No .env do projeto: opcional CHATWOOT_IMAGE=ghcr.io/usuario/repo:customizations
+#    (default abaixo assume o fork ojfernandess/chatwoot na tag da branch customizations)
+
+services:
+  chatwoot:
+    image: ${CHATWOOT_IMAGE:-ghcr.io/ojfernandess/chatwoot:customizations}
+    pull_policy: always
+    build: null
+
+  chatwoot-sidekiq:
+    image: ${CHATWOOT_IMAGE:-ghcr.io/ojfernandess/chatwoot:customizations}
+    pull_policy: always
+    build: null
