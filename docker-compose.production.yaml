@@ -1,3 +1,5 @@
+# Production-oriented stack (Rails + Sidekiq + Postgres + Redis, official image with precompiled assets).
+# Recommended for EasyPanel / PaaS. Do not use root docker-compose.yaml there — it targets local dev + Vite.
 version: '3'
 
 services:
