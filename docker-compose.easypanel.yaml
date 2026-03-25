@@ -1,5 +1,6 @@
 # EasyPanel: UM único arquivo — imagem pré-buildada no GHCR (sem build no servidor).
-# Fonte → Arquivo Docker Compose: docker-compose.easypanel.yaml
+# Fonte → Caminho de build: /  |  Compose: docker-compose.yml (recomendado) ou este ficheiro
+# NUNCA defina o caminho de build como nome deste YAML — causa buildx .../yaml/Dockerfile
 #
 # Limitação do painel: em projeto COMPOSE costuma existir UM editor de .env global, não “env por
 # serviço” como em apps isolados. Neste arquivo:

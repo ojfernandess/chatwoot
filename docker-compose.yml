@@ -1,0 +1,13 @@
+# EasyPanel: use este ficheiro no campo "Arquivo Docker Compose" (valor por defeito em muitos painéis).
+#
+# IMPORTANTE — Fonte no EasyPanel:
+#   • Caminho de build (Build path):  /   (raiz do repositório)
+#   • NÃO use "docker-compose.easypanel.yaml" como caminho de build — o painel trata-o como pasta
+#     e corre docker buildx com .../docker-compose.easypanel.yaml/Dockerfile (erro).
+#   • Tipo de projeto: Docker Compose / stack compose — não "só Dockerfile".
+#
+# O conteúdo efectivo da stack está em docker-compose.easypanel.yaml (include abaixo).
+# Requer Docker Compose v2.20+ (include).
+
+include:
+  - path: docker-compose.easypanel.yaml
