@@ -1,0 +1,8 @@
+# Opcional: publicar o Rails na porta do host (VM sem proxy tipo EasyPanel).
+# Uso: docker compose -f docker-compose.yaml -f docker-compose.host-ports.override.yaml up -d
+# Ajuste a porta esquerda se 3010 estiver ocupada (interpolação: .env ao lado do compose).
+
+services:
+  chatwoot:
+    ports:
+      - "${CHATWOOT_PUBLISH_PORT:-3010}:3000"
