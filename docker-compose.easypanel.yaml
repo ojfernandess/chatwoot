@@ -1,8 +1,18 @@
 # EasyPanel: UM único arquivo — imagem pré-buildada no GHCR (sem build no servidor).
 # Fonte → Arquivo Docker Compose: docker-compose.easypanel.yaml
 #
+# Limitação do painel: em projeto COMPOSE costuma existir UM editor de .env global, não “env por
+# serviço” como em apps isolados. Neste arquivo:
+#   • .env = variáveis compartilhadas (SECRET_KEY_BASE, FRONTEND_URL, SMTP, etc.)
+#   • Arquivos OPCIONAIS ao lado do compose (crie no servidor / editor de ficheiros do painel):
+#       .env.chatwoot      — só entra no container chatwoot
+#       .env.sidekiq       — só no chatwoot-sidekiq
+#       .env.postgres      — só no chatwoot1-db (ex.: POSTGRES_PASSWORD)
+#     Se não existirem, o Compose ignora (required: false). Requer Docker Compose v2.24+.
+# Rails e Sidekiq normalmente usam o MESMO .env; use .env.sidekiq só para exceções (ex. LOG_LEVEL).
+#
 # Pré-requisito: GitHub Actions "Build and push image (GHCR)" verde na branch customizations.
-# Imagem padrão: ghcr.io/ojfernandess/chatwoot:customizations (sobrescreva com CHATWOOT_IMAGE no .env).
+# Imagem padrão: ghcr.io/ojfernandess/chatwoot:customizations (CHATWOOT_IMAGE no .env para outra tag).
 # Pacote GHCR público OU docker login ghcr.io no servidor (PAT read:packages).
 #
 # Para build local no clone, use docker-compose.yaml (não este arquivo).
@@ -12,7 +22,11 @@ services:
     image: ${CHATWOOT_IMAGE:-ghcr.io/ojfernandess/chatwoot:customizations}
     pull_policy: always
     restart: always
-    env_file: .env
+    env_file:
+      - path: .env
+        required: true
+      - path: .env.chatwoot
+        required: false
     volumes:
       - storage_data:/app/storage
     depends_on:
@@ -44,7 +58,11 @@ services:
         condition: service_healthy
       chatwoot-redis:
         condition: service_started
-    env_file: .env
+    env_file:
+      - path: .env
+        required: true
+      - path: .env.sidekiq
+        required: false
     volumes:
       - storage_data:/app/storage
     environment:
@@ -62,6 +80,9 @@ services:
   chatwoot1-db:
     image: pgvector/pgvector:pg16
     restart: always
+    env_file:
+      - path: .env.postgres
+        required: false
     volumes:
       - postgres:/var/lib/postgresql/data
     environment:
