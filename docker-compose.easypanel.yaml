@@ -1,21 +1,16 @@
-# EasyPanel / self-hosted: build from docker/Dockerfile. Postgres image exige POSTGRES_PASSWORD não vazio.
-# Nomes dos serviços alinhados ao painel EasyPanel: chatwoot, chatwoot-sidekiq, chatwoot1-db (+ chatwoot-redis).
-# Sem `ports` no host: evita conflito com outros stacks; o proxy do painel fala com chatwoot:3000 na rede interna.
-# Para bind manual (sem proxy), mescle docker-compose.host-ports.override.example.yaml.
-# Imagem pré-buildada (GHCR): painel com UM compose só → use docker-compose.easypanel.yaml.
-# Dois arquivos: mescle docker-compose.yaml + docker-compose.ghcr.override.yaml.
-# Se o .env tiver POSTGRES_PASSWORD vazio, as variáveis abaixo nos serviços app sobrepõem para bater certo com o Postgres.
+# EasyPanel: UM único arquivo — imagem pré-buildada no GHCR (sem build no servidor).
+# Fonte → Arquivo Docker Compose: docker-compose.easypanel.yaml
+#
+# Pré-requisito: GitHub Actions "Build and push image (GHCR)" verde na branch customizations.
+# Imagem padrão: ghcr.io/ojfernandess/chatwoot:customizations (sobrescreva com CHATWOOT_IMAGE no .env).
+# Pacote GHCR público OU docker login ghcr.io no servidor (PAT read:packages).
+#
+# Para build local no clone, use docker-compose.yaml (não este arquivo).
+
 services:
   chatwoot:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-      args:
-        RAILS_ENV: production
-        BUNDLE_WITHOUT: development:test
-        RAILS_SERVE_STATIC_FILES: "true"
-        NODE_OPTIONS: "--max-old-space-size=8192 --openssl-legacy-provider"
-    image: agentslabs-chatwoot:latest
+    image: ${CHATWOOT_IMAGE:-ghcr.io/ojfernandess/chatwoot:customizations}
+    pull_policy: always
     restart: always
     env_file: .env
     volumes:
@@ -41,15 +36,8 @@ services:
     command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
 
   chatwoot-sidekiq:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-      args:
-        RAILS_ENV: production
-        BUNDLE_WITHOUT: development:test
-        RAILS_SERVE_STATIC_FILES: "true"
-        NODE_OPTIONS: "--max-old-space-size=8192 --openssl-legacy-provider"
-    image: agentslabs-chatwoot:latest
+    image: ${CHATWOOT_IMAGE:-ghcr.io/ojfernandess/chatwoot:customizations}
+    pull_policy: always
     restart: always
     depends_on:
       chatwoot1-db:

@@ -5,9 +5,8 @@
 # 1. Em github.com → Packages → imagem → Package settings → visibilidade (público) OU
 # 2. No servidor: docker login ghcr.io com PAT (read:packages).
 #
-# EasyPanel: compose que aponta para, por exemplo:
-#   image: ghcr.io/seu-usuario/chatwoot:customizations
-# e remova o bloco `build:` dos serviços chatwoot e chatwoot-sidekiq (mesma imagem), ex.: docker-compose.ghcr.override.yaml.
+# EasyPanel (um único compose): arquivo docker-compose.easypanel.yaml no repositório.
+# Vários composes: docker-compose.yaml + docker-compose.ghcr.override.yaml
 
 name: Build and push image (GHCR)
 

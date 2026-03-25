@@ -1,5 +1,5 @@
-# Mescle com o compose base no EasyPanel (deploy rápido, sem build no servidor):
-#   docker-compose.yaml  +  docker-compose.ghcr.override.yaml
+# Mescle com docker-compose.yaml quando o painel aceita vários arquivos.
+# EasyPanel (só um arquivo): use docker-compose.easypanel.yaml no campo do compose.
 #
 # 1) GitHub → Actions → rode "Build and push image (GHCR)" na branch customizations.
 # 2) GitHub → Packages → ghcr.io/.../chatwoot → torne o pacote público OU no servidor:
