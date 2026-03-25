@@ -1,150 +1,53 @@
-# Local development stack. For production / EasyPanel use docker-compose.production.yaml
-# (pre-built assets, no Vite dev server) or build docker/Dockerfile with RAILS_ENV=production.
-#
-# rails.Dockerfile and vite.Dockerfile use FROM chatwoot:development; that image only exists
-# after docker/Dockerfile is built. chatwoot-dev-base builds it first so Compose never tries
-# to pull a non-existent image from Docker Hub.
-version: '3.9'
+version: "3.8"
 
 services:
-  chatwoot-dev-base:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile
-      args:
-        BUNDLE_WITHOUT: ''
-        EXECJS_RUNTIME: 'Node'
-        RAILS_ENV: 'development'
-        RAILS_SERVE_STATIC_FILES: 'false'
-    image: chatwoot:development
-    env_file: .env
-    restart: 'no'
-    command: ['true']
-
-  app-common: &app-common
-    env_file: .env
-    tty: true
-    stdin_open: true
-    depends_on:
-      chatwoot-dev-base:
-        condition: service_completed_successfully
-
-  rails:
-    <<: *app-common
+  chatwoot:
     build:
       context: .
       dockerfile: ./docker/dockerfiles/rails.Dockerfile
-    image: chatwoot-rails:development
-    volumes:
-      - ./:/app:delegated
-      - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - cache:/app/tmp/cache
-      - bundle:/usr/local/bundle
-    depends_on:
-      chatwoot-dev-base:
-        condition: service_completed_successfully
-      postgres:
-        condition: service_started
-      redis:
-        condition: service_started
-      vite:
-        condition: service_started
-      mailhog:
-        condition: service_started
-    ports:
-      - 3000:3000
-    environment:
-      - VITE_DEV_SERVER_HOST=vite
-      - NODE_ENV=development
-      - RAILS_ENV=development
-    entrypoint: docker/entrypoints/rails.sh
-    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
-
-  # Reuses image built by `rails` (rails.Dockerfile); do not add a duplicate build: here.
-  sidekiq:
+    image: chatwoot:latest
+    restart: always
     env_file: .env
-    tty: true
-    stdin_open: true
-    image: chatwoot-rails:development
-    volumes:
-      - ./:/app:delegated
-      - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - cache:/app/tmp/cache
-      - bundle:/usr/local/bundle
     depends_on:
-      chatwoot-dev-base:
-        condition: service_completed_successfully
-      postgres:
-        condition: service_started
-      redis:
-        condition: service_started
-      mailhog:
-        condition: service_started
-      rails:
-        condition: service_started
-    environment:
-      - NODE_ENV=development
-      - RAILS_ENV=development
-    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
-
-  vite:
-    <<: *app-common
-    build:
-      context: .
-      dockerfile: ./docker/dockerfiles/vite.Dockerfile
-    image: chatwoot-vite:development
-    volumes:
-      - ./:/app:delegated
-      - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - cache:/app/tmp/cache
-      - bundle:/usr/local/bundle
-    depends_on:
-      chatwoot-dev-base:
-        condition: service_completed_successfully
+      - postgres
+      - redis
     ports:
-      - '3036:3036' # Vite dev server
+      - "3000:3000"
     environment:
-      - VITE_DEV_SERVER_HOST=0.0.0.0
-      - NODE_ENV=development
-      - RAILS_ENV=development
-    entrypoint: docker/entrypoints/vite.sh
-    command: bin/vite dev
+      - RAILS_ENV=production
+      - NODE_ENV=production
+      - INSTALLATION_ENV=docker
+    command: bundle exec rails s -p 3000 -b 0.0.0.0
+
+  sidekiq:
+    image: chatwoot:latest
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+    environment:
+      - RAILS_ENV=production
+      - NODE_ENV=production
+    command: bundle exec sidekiq -C config/sidekiq.yml
 
   postgres:
     image: pgvector/pgvector:pg16
     restart: always
-    ports:
-      - '5432:5432'
     volumes:
-      - postgres:/data/postgres
+      - postgres:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=chatwoot
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=
+      POSTGRES_DB: chatwoot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
 
   redis:
     image: redis:alpine
     restart: always
-    command: ['sh', '-c', 'redis-server --requirepass "$REDIS_PASSWORD"']
-    env_file: .env
+    command: redis-server
     volumes:
-      - redis:/data/redis
-    ports:
-      - '6379:6379'
-
-  mailhog:
-    image: mailhog/mailhog
-    ports:
-      - 1025:1025
-      - 8025:8025
+      - redis:/data
 
 volumes:
   postgres:
   redis:
-  packs:
-  node_modules:
-  cache:
-  bundle:
