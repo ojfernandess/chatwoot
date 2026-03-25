@@ -8,6 +8,11 @@ export const NOTIFICATION_TYPES = [
     value: 'conversation_assignment',
   },
   {
+    label:
+      'PROFILE_SETTINGS.FORM.NOTIFICATIONS.TYPES.CONVERSATION_TRANSFERRED_TO_TEAM',
+    value: 'conversation_transferred',
+  },
+  {
     label: 'PROFILE_SETTINGS.FORM.NOTIFICATIONS.TYPES.CONVERSATION_MENTION',
     value: 'conversation_mention',
   },

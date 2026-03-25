@@ -137,6 +137,7 @@
       "EMAIL_NOTIFICATIONS_SECTION": {
         "TITLE": "Email Notifications",
         "NOTE": "Update your email notification preferences here",
+        "CONVERSATION_TRANSFERRED": "Send email notifications when a conversation is transferred to your team",
         "CONVERSATION_ASSIGNMENT": "Send email notifications when a conversation is assigned to me",
         "CONVERSATION_CREATION": "Send email notifications when a new conversation is created",
         "CONVERSATION_MENTION": "Send email notifications when you are mentioned in a conversation",
@@ -154,6 +155,7 @@
         "TYPES": {
           "CONVERSATION_CREATED": "A new conversation is created",
           "CONVERSATION_ASSIGNED": "A conversation is assigned to you",
+          "CONVERSATION_TRANSFERRED_TO_TEAM": "A conversation is transferred to your team",
           "CONVERSATION_MENTION": "You are mentioned in a conversation",
           "ASSIGNED_CONVERSATION_NEW_MESSAGE": "A new message is created in an assigned conversation",
           "PARTICIPATING_CONVERSATION_NEW_MESSAGE": "A new message is created in a participating conversation",
@@ -170,6 +172,7 @@
       "PUSH_NOTIFICATIONS_SECTION": {
         "TITLE": "Push Notifications",
         "NOTE": "Update your push notification preferences here",
+        "CONVERSATION_TRANSFERRED": "Send push notifications when a conversation is transferred to your team",
         "CONVERSATION_ASSIGNMENT": "Send push notifications when a conversation is assigned to me",
         "CONVERSATION_CREATION": "Send push notifications when a new conversation is created",
         "CONVERSATION_MENTION": "Send push notifications when you are mentioned in a conversation",

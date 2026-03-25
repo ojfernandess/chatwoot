@@ -20,10 +20,7 @@ class Notification::PushNotificationService
   delegate :notification_settings, to: :user
 
   def user_subscribed_to_notification?
-    notification_setting = notification_settings.find_by(account_id: notification.account.id)
-    return true if notification_setting.public_send("push_#{notification.notification_type}?")
-
-    false
+    notification.send(:user_subscribed_to_notification?, 'push')
   end
 
   def conversation

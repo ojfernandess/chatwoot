@@ -14,6 +14,7 @@ import PriorityMark from './PriorityMark.vue';
 import SLACardLabel from './components/SLACardLabel.vue';
 import ContextMenu from 'dashboard/components/ui/ContextMenu.vue';
 import VoiceCallStatus from './VoiceCallStatus.vue';
+import { useConversationTransferHighlight } from 'dashboard/composables/useConversationTransferHighlight';
 
 const props = defineProps({
   activeLabel: { type: String, default: '' },
@@ -86,6 +87,10 @@ const currentContact = computed(() => {
 const isActiveChat = computed(() => {
   return currentChat.value.id === props.chat.id;
 });
+
+const conversationId = computed(() => props.chat.id);
+const { isHighlighted: isTeamTransferHighlight } =
+  useConversationTransferHighlight(conversationId);
 
 const unreadCount = computed(() => props.chat.unread_count);
 
@@ -249,12 +254,15 @@ const deleteConversation = () => {
 
 <template>
   <div
-    class="relative flex items-start flex-grow-0 flex-shrink-0 w-auto max-w-full py-0 border-t-0 border-b-0 border-l-0 border-r-0 border-transparent border-solid cursor-pointer conversation hover:bg-n-alpha-1 dark:hover:bg-n-alpha-3 group"
+    class="relative flex items-start flex-grow-0 flex-shrink-0 w-auto max-w-full py-0 border-t-0 border-b-0 border-l-0 border-r-0 border-transparent border-solid cursor-pointer conversation transition-colors duration-150 ease-out hover:bg-n-alpha-2 dark:hover:bg-n-alpha-4 rounded-[length:var(--cw-conversation-row-radius)] group"
     :class="{
-      'active animate-card-select bg-n-background border-n-weak': isActiveChat,
+      'active animate-card-select bg-n-background border-n-weak ring-1 ring-inset ring-[rgb(var(--cw-conversation-active-ring))]/35':
+        isActiveChat,
+      'ring-2 ring-inset ring-[rgb(var(--cw-conversation-active-ring))]/45 shadow-sm':
+        isTeamTransferHighlight && !isActiveChat,
       'bg-n-slate-2': selected,
       'px-0': compact,
-      'px-3': !compact,
+      'px-[length:var(--cw-inbox-pane-padding-x)]': !compact,
     }"
     @click="onCardClick"
     @contextmenu="openContextMenu($event)"
@@ -367,7 +375,7 @@ const deleteConversation = () => {
           />
         </span>
         <span
-          class="shadow-lg rounded-full text-xxs font-semibold h-4 leading-4 ltr:ml-auto rtl:mr-auto mt-1 min-w-[1rem] px-1 py-0 text-center text-white bg-n-teal-9"
+          class="shadow-md rounded-full text-xxs font-semibold h-4 leading-4 ltr:ml-auto rtl:mr-auto mt-1 min-w-[1.125rem] px-1 py-0 text-center text-white bg-n-teal-9 ring-2 ring-n-background dark:ring-n-slate-2"
           :class="hasUnread ? 'block' : 'hidden'"
         >
           {{ unreadCount > 9 ? '9+' : unreadCount }}

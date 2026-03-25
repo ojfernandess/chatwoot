@@ -95,7 +95,7 @@ const generateImage = async () => {
     );
 
     const logo = new Image();
-    logo.src = '/brand-assets/logo.svg';
+    logo.src = '/agentslabslogo.png';
     await new Promise(resolve => {
       logo.onload = resolve;
     });

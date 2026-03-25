@@ -3,7 +3,9 @@ import BaseActionCableConnector from '../../shared/helpers/BaseActionCableConnec
 import DashboardAudioNotificationHelper from './AudioAlerts/DashboardAudioNotificationHelper';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
 import { emitter } from 'shared/helpers/mitt';
+import { BUS_EVENTS } from 'shared/constants/busEvents';
 import { useImpersonation } from 'dashboard/composables/useImpersonation';
+import { useAlert } from 'dashboard/composables';
 
 const { isImpersonating } = useImpersonation();
 
@@ -20,6 +22,7 @@ class ActionCableConnector extends BaseActionCableConnector {
       'user:logout': this.onLogout,
       'page:reload': this.onReload,
       'assignee.changed': this.onAssigneeChanged,
+      'team.changed': this.onTeamChanged,
       'conversation.typing_on': this.onTypingOn,
       'conversation.typing_off': this.onTypingOff,
       'conversation.contact_changed': this.onConversationContactChange,
@@ -74,6 +77,15 @@ class ActionCableConnector extends BaseActionCableConnector {
   };
 
   onAssigneeChanged = payload => {
+    const { id } = payload;
+    if (id) {
+      this.app.$store.dispatch('updateConversation', payload);
+    }
+    this.fetchConversationStats();
+  };
+
+  // Keeps conversation list + team filters in sync when team_id changes (mirrors assignee.changed).
+  onTeamChanged = payload => {
     const { id } = payload;
     if (id) {
       this.app.$store.dispatch('updateConversation', payload);
@@ -180,6 +192,22 @@ class ActionCableConnector extends BaseActionCableConnector {
 
   onNotificationCreated = data => {
     this.app.$store.dispatch('notifications/addNotification', data);
+    const notification = data.notification;
+    if (
+      notification?.notification_type === 'conversation_transferred' &&
+      notification?.primary_actor_id
+    ) {
+      const message =
+        notification.push_message_title ||
+        notification.push_message_body ||
+        '';
+      if (message) {
+        useAlert(message);
+      }
+      emitter.emit(BUS_EVENTS.CONVERSATION_TRANSFERRED_HIGHLIGHT, {
+        conversationId: notification.primary_actor_id,
+      });
+    }
   };
 
   onNotificationDeleted = data => {

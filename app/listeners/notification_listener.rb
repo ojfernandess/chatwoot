@@ -47,6 +47,29 @@ class NotificationListener < BaseListener
     ).perform
   end
 
+  # Fired when team_id changes (see AssignmentHandler + Events::Types::CONVERSATION_TRANSFERRED).
+  def conversation_transferred(event)
+    conversation, account = extract_conversation_and_account(event)
+    return if conversation.pending?
+    return if conversation.team_id.blank?
+
+    team = conversation.team
+    return if team.blank?
+
+    performer_id = Current.user&.id
+    meta = { team_id: team.id, team_name: team.name }
+
+    team.members.where.not(id: performer_id).find_each do |member|
+      NotificationBuilder.new(
+        notification_type: 'conversation_transferred',
+        user: member,
+        account: account,
+        primary_actor: conversation,
+        meta: meta
+      ).perform
+    end
+  end
+
   def message_created(event)
     message = extract_message_and_account(event)[0]
 

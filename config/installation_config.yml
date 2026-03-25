@@ -18,16 +18,17 @@
   value: 'Chatwoot'
   display_title: 'Installation Name'
   description: 'The installation wide name that would be used in the dashboard, title etc.'
+# Agents Labs branding (public/agentslabslogo.png). Super Admin → App Config can override per deployment.
 - name: LOGO_THUMBNAIL
-  value: '/brand-assets/logo_thumbnail.svg'
+  value: '/agentslabslogo.png'
   display_title: 'Logo Thumbnail'
   description: 'The thumbnail that would be used for favicon (512px X 512px)'
 - name: LOGO
-  value: '/brand-assets/logo.svg'
+  value: '/agentslabslogo.png'
   display_title: 'Logo'
   description: 'The logo that would be used on the dashboard, login page etc.'
 - name: LOGO_DARK
-  value: '/brand-assets/logo_dark.svg'
+  value: '/agentslabslogo.png'
   display_title: 'Logo Dark Mode'
   description: 'The logo that would be used on the dashboard, login page etc. for dark mode'
 - name: BRAND_URL

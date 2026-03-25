@@ -1,0 +1,15 @@
+// Premium layout tokens — safe extension point for white-label / theming (override in host CSS if needed).
+@layer base {
+  :root {
+    --cw-inbox-pane-padding-x: 0.875rem;
+    --cw-inbox-header-height: 3.5rem;
+    --cw-conversation-list-padding-y: 0.5rem;
+    --cw-conversation-row-radius: 0.625rem;
+    --cw-conversation-active-ring: var(--iris-9);
+    --cw-conversation-hover-alpha: 0.06;
+  }
+
+  .dark {
+    --cw-conversation-active-ring: var(--iris-10);
+  }
+}

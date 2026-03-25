@@ -240,4 +240,35 @@ describe NotificationListener do
       end
     end
   end
+
+  describe 'conversation_transferred' do
+    let(:event_name) { :'conversation.transferred' }
+    let!(:team_a) { create(:team, account: account) }
+    let!(:team_b) { create(:team, account: account) }
+    let!(:teammate) { create(:user, account: account) }
+    let!(:performer) { create(:user, account: account) }
+
+    before do
+      create(:team_member, team: team_b, user: teammate)
+      create(:team_member, team: team_b, user: performer)
+      [teammate, performer].each do |member|
+        setting = member.notification_settings.find_by(account_id: account.id)
+        setting.update!(selected_email_flags: [:email_conversation_transferred], selected_push_flags: [])
+      end
+    end
+
+    it 'creates internal notifications for teammates except the user who transferred' do
+      conversation.update!(team_id: team_a.id)
+      conversation.update!(team_id: team_b.id)
+      allow(Current).to receive(:user).and_return(performer)
+
+      event = Events::Base.new(event_name, Time.zone.now, conversation: conversation.reload)
+      expect { listener.conversation_transferred(event) }.to change {
+        Notification.where(notification_type: :conversation_transferred).count
+      }.by(1)
+
+      expect(teammate.notifications.last.notification_type).to eq('conversation_transferred')
+      expect(performer.notifications.where(notification_type: :conversation_transferred)).to be_empty
+    end
+  end
 end

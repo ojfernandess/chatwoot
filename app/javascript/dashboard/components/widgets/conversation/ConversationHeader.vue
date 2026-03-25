@@ -90,12 +90,24 @@ const hasMultipleInboxes = computed(
 );
 
 const hasSlaPolicyId = computed(() => props.chat?.sla_policy_id);
+
+const conversationStatus = computed(() => currentChat.value?.status);
+
+const statusMeta = computed(() => {
+  const map = {
+    open: { icon: 'mail-inbox', labelKey: 'CONVERSATION.HEADER.STATUS_OPEN' },
+    resolved: { icon: 'checkmark-circle', labelKey: 'CONVERSATION.HEADER.STATUS_RESOLVED' },
+    pending: { icon: 'info', labelKey: 'CONVERSATION.HEADER.STATUS_PENDING' },
+    snoozed: { icon: 'calendar-clock', labelKey: 'CONVERSATION.HEADER.STATUS_SNOOZED' },
+  };
+  return map[conversationStatus.value] || map.open;
+});
 </script>
 
 <template>
   <div
     ref="conversationHeader"
-    class="flex flex-col gap-3 items-center justify-between flex-1 w-full min-w-0 xl:flex-row px-3 pt-3 pb-2 h-24 xl:h-12"
+    class="flex flex-col gap-2.5 items-center justify-between flex-1 w-full min-w-0 xl:flex-row px-[length:var(--cw-inbox-pane-padding-x)] pt-3 pb-2.5 h-24 xl:h-[length:var(--cw-inbox-header-height)]"
   >
     <div
       class="flex items-center justify-start w-full xl:w-auto max-w-full min-w-0 xl:flex-1"
@@ -116,9 +128,15 @@ const hasSlaPolicyId = computed(() => props.chat?.sla_policy_id);
       <div
         class="flex flex-col items-start min-w-0 ml-2 overflow-hidden rtl:ml-0 rtl:mr-2"
       >
-        <div class="flex flex-row items-center max-w-full gap-1 p-0 m-0">
+        <div class="flex flex-row items-center max-w-full gap-1.5 p-0 m-0 min-w-0">
+          <fluent-icon
+            v-tooltip="$t(statusMeta.labelKey)"
+            size="16"
+            class="text-n-slate-10 flex-shrink-0"
+            :icon="statusMeta.icon"
+          />
           <span
-            class="text-sm font-medium truncate leading-tight text-n-slate-12"
+            class="text-sm font-semibold tracking-tight truncate leading-tight text-n-slate-12 font-inter"
           >
             {{ currentContact.name }}
           </span>

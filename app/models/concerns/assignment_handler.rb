@@ -34,6 +34,8 @@ module AssignmentHandler
     }.each do |event, condition|
       condition.call && dispatcher_dispatch(event, previous_changes)
     end
+    # Domain event for downstream listeners (internal notifications when a conversation lands on a new team).
+    dispatcher_dispatch(CONVERSATION_TRANSFERRED, previous_changes) if saved_change_to_team_id?
   end
 
   def process_assignment_changes

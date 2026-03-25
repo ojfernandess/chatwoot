@@ -30,6 +30,7 @@
     "TYPES_NEXT": {
       "CONVERSATION_MENTION": "Mencionado",
       "CONVERSATION_ASSIGNMENT": "Atribuídas a você",
+      "CONVERSATION_TRANSFERRED": "Transferida para o seu time",
       "CONVERSATION_CREATION": "Nova conversa",
       "SLA_MISSED_FIRST_RESPONSE": "Quebra SLA",
       "SLA_MISSED_NEXT_RESPONSE": "Quebra SLA",

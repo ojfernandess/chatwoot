@@ -162,6 +162,7 @@
     "TYPE_LABEL": {
       "conversation_creation": "Nova conversa",
       "conversation_assignment": "Conversa Atribuída",
+      "conversation_transferred": "Transferência de time",
       "assigned_conversation_new_message": "Nova Mensagem",
       "participating_conversation_new_message": "Nova Mensagem",
       "conversation_mention": "Menção",

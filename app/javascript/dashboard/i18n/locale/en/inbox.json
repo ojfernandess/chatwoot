@@ -30,6 +30,7 @@
     "TYPES_NEXT": {
       "CONVERSATION_MENTION": "Mentioned",
       "CONVERSATION_ASSIGNMENT": "Assigned to you",
+      "CONVERSATION_TRANSFERRED": "Transferred to your team",
       "CONVERSATION_CREATION": "New Conversation",
       "SLA_MISSED_FIRST_RESPONSE": "SLA breach",
       "SLA_MISSED_NEXT_RESPONSE": "SLA breach",

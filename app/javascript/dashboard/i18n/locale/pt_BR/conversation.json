@@ -96,6 +96,10 @@
       "SNOOZED_UNTIL_TOMORROW": "Adiado até amanhã",
       "SNOOZED_UNTIL_NEXT_WEEK": "Adiada até a próxima semana",
       "SNOOZED_UNTIL_NEXT_REPLY": "Adiado até a próxima resposta",
+      "STATUS_OPEN": "Conversa aberta",
+      "STATUS_RESOLVED": "Resolvida",
+      "STATUS_PENDING": "Pendente",
+      "STATUS_SNOOZED": "Adiada",
       "SLA_STATUS": {
         "FRT": "FRT {status}",
         "NRT": "NRT {status}",

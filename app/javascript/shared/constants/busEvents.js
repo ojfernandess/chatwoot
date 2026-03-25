@@ -8,6 +8,8 @@ export const BUS_EVENTS = {
   WEBSOCKET_DISCONNECT: 'WEBSOCKET_DISCONNECT',
   WEBSOCKET_RECONNECT: 'WEBSOCKET_RECONNECT',
   WEBSOCKET_RECONNECT_COMPLETED: 'WEBSOCKET_RECONNECT_COMPLETED',
+  /** Highlights a row in the conversation list when a team-transfer notification arrives for the current user. */
+  CONVERSATION_TRANSFERRED_HIGHLIGHT: 'conversation_transferred_highlight',
   TOGGLE_REPLY_TO_MESSAGE: 'TOGGLE_REPLY_TO_MESSAGE',
   SHOW_TOAST: 'newToastMessage',
   NEW_CONVERSATION_MODAL: 'newConversationModal',
